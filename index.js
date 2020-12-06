@@ -1,4 +1,5 @@
 import express, { response } from 'express'
+import morgan from 'morgan'
 
 const app = express()
 
@@ -25,6 +26,10 @@ let persons = [
   }
 ]
 app.use(express.json())
+
+
+morgan.token('body', function (req, res) {  if(req.method === "POST") return JSON.stringify(req.body) })
+app.use(morgan(':method :url :status :res[content-length] :response-time ms :body'));
 
 //From Mozilla's Javascript Reference
 function getRandomInt(min, max) {
@@ -100,4 +105,5 @@ app.delete('/api/persons/:id', (req, res) => {
 const PORT = 3001
 app.listen(PORT)
 console.log(`Server running on port ${PORT}`)
+
 
