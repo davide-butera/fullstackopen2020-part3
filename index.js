@@ -65,10 +65,10 @@ app.get('/api/persons', (_,res) => {
 
 app.get('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id)
-  const note = persons.find(note => note.id === id)
+  const person = persons.find(note => note.id === id)
   
-  if (note) {
-    res.json(note)
+  if (person) {
+    res.json(person)
   } else {
     res.status(404).end()
   }
