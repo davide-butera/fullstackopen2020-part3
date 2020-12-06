@@ -33,7 +33,7 @@ const generateId = () => {
   return maxId + 1 
 }
 
-app.post('/api/notes', (request, response) => {
+app.post('/api/persons', (request, response) => {
   const body = request.body
   
   if(!body.content) {
@@ -65,7 +65,7 @@ app.get('/api/persons', (_,res) => {
 
 app.get('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id)
-  const person = persons.find(note => note.id === id)
+  const person = persons.find(person => person.id === id)
   
   if (person) {
     res.json(person)
@@ -76,7 +76,7 @@ app.get('/api/persons/:id', (req, res) => {
 
 app.delete('/api/persons/:id', (req, res) => {
   const id = Number(req.params.id)
-  persons = persons.filter(note => note.id !== id)
+  persons = persons.filter(person => person.id !== id)
 
   res.status(204).end()
 })
