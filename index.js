@@ -26,11 +26,19 @@ let persons = [
 ]
 app.use(express.json())
 
+//From Mozilla's Javascript Reference
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
+}
+
 const generateId = () => {
-  const maxId = persons.length > 0 
+  /*const maxId = persons.length > 0 
     ? Math.max(...persons.map(n => n.id))
     : 0
-  return maxId + 1 
+  return maxId + 1 */
+  return getRandomInt(5, 1000000)
 }
 
 app.post('/api/persons', (request, response) => {
