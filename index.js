@@ -53,8 +53,10 @@ app.post('/api/notes', (request, response) => {
   response.json(note)
 })
 
-app.get('/', (_, res) => {
-    res.send('<h1>Ciao World!</h1>')
+app.get('/info', (_, res) => {
+    const text = `<p>Phonebook has info for ${persons.length} people</p>
+                  <p>${new Date()}</p>`
+    res.send(text)
 })
 
 app.get('/api/persons', (_,res) => {
