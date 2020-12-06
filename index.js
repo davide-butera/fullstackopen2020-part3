@@ -4,24 +4,24 @@ const app = express()
 
 let persons = [
   {
+    "id": 1,
     "name": "Arto Hellas",
-    "number": "040-123456",
-    "id": 1
+    "number": "040-123456"
   },
   {
+    "id": 2,
     "name": "Ada Lovelace",
-    "number": "39-44-5323523",
-    "id": 2
+    "number": "39-44-5323523"
   },
   {
+    "id": 3,
     "name": "Dan Abramov",
-    "number": "12-43-234345",
-    "id": 3
+    "number": "12-43-234345"
   },
   {
+    "id": 4,
     "name": "Mary Poppendieck",
-    "number": "39-23-6423122",
-    "id": 4
+    "number": "39-23-6423122"
   }
 ]
 app.use(express.json())
@@ -43,22 +43,27 @@ const generateId = () => {
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
-  
-  if(!body.content) {
+
+  if(!body.name || !body.number) {
     return response.status(400).json({
       error: "content missing"
     })
   }
-  const note = {
-    content: body.content,
-    important: body.important || false,
-    date: new Date(),
+
+  if(persons.find(person => person.name === body.name)) {
+    return response.status(400).json({
+      error: "name must be unique"
+    })
+  }
+  const person = {
     id: generateId(),
+    name: body.name,
+    number: body.number
   }
   
-  persons = persons.concat(note)
+  persons = persons.concat(person)
 
-  response.json(note)
+  response.json(person)
 })
 
 app.get('/info', (_, res) => {
