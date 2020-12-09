@@ -33,11 +33,6 @@ app.use(express.json())
 if (process.env.NODE_ENV === 'production') {
   // Exprees will serve up production assets
   app.use(express.static('build'));
-
-  // Express serve up index.html file if it doesn't recognize route
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'build', 'index.html'));
-  });
 }
 
 morgan.token('body', function (req, res) {  if(req.method === "POST") return JSON.stringify(req.body) })
