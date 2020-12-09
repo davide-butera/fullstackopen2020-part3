@@ -1,1 +1,1 @@
-Procfile 
+web: yarn start
