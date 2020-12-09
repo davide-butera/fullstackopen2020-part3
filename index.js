@@ -31,7 +31,7 @@ let persons = [
 app.use(express.json())
 app.use(express.static('build'))
 app.get('*', (req, res) => {
-    res.sendFile(path.join('build', 'index.html'))
+  res.sendFile('build/index.html' , { root : __dirname})
   })
 
 morgan.token('body', function (req, res) {  if(req.method === "POST") return JSON.stringify(req.body) })
