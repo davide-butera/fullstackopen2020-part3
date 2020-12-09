@@ -1,9 +1,8 @@
 import express, { response } from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
+import path from 'path'
 
-
-const path = require('path');
 const app = express()
 app.use(cors())
 
