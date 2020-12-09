@@ -3,6 +3,7 @@ import morgan from 'morgan'
 import cors from 'cors'
 
 
+const path = require('path');
 const app = express()
 app.use(cors())
 
