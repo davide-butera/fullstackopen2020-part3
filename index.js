@@ -13,7 +13,7 @@ app.use(express.static('build'))
 
 morgan.token('body', function (req, res) {  if(req.method === "POST") return JSON.stringify(req.body) })
 app.use(morgan(':method :url :status :res[content-length] :response-time ms :body'));
-
+/*
 //From Mozilla's Javascript Reference
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -25,9 +25,9 @@ const generateId = () => {
   /*const maxId = persons.length > 0 
     ? Math.max(...persons.map(n => n.id))
     : 0
-  return maxId + 1 */
+  return maxId + 1 
   return getRandomInt(5, 1000000)
-}
+}*/
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
@@ -49,10 +49,24 @@ app.post('/api/persons', (request, response) => {
   })
 })
 
+app.put('/api/persons/:id', (request, response, next) => {
+  const body = request.body
+  console.log(body.name)
+  console.log(body.number)
+  Person.findOneAndUpdate({name:body.name}, {number: body.number}, {new: true})  
+    .then(updatedPerson => {
+      console.log(updatedPerson)
+    })
+    .catch(error => next(error))
+})
+
 app.get('/info', (_, res) => {
-    const text = `<p>Phonebook has info for ${person.length} person</p>
-                  <p>${new Date()}</p>`
-    res.send(text)
+    Person.countDocuments({}, (_, count) => {
+      console.log(count)
+      const text = `<p>Phonebook has info for ${count} person</p>
+      <p>${new Date()}</p>`
+      res.send(text)
+    })
 })
 
 app.get('/api/persons', (request, response) => {
@@ -61,18 +75,38 @@ app.get('/api/persons', (request, response) => {
   })
 })
 
-app.get('/api/persons/:id', (request, response) => {
+
+
+app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id).then(person => {
-    response.json(person)
-  })
+      if (person) {
+        response.json(person)
+      }
+      else {
+        response.status(404).end()    
+      } 
+    })
+    .catch(error => next(error))
 })
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
 
-app.delete('/api/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-  person = person.filter(person => person.id !== id)
+  if (error.name === 'CastError' && error.kind === 'ObjectId') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
 
-  res.status(204).end()
+  next(error)
+}
+
+app.use(errorHandler)
+
+app.delete('/api/persons/:id', (request, response, next) => {
+  Person.findByIdAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
 const PORT = process.env.PORT || 3001
