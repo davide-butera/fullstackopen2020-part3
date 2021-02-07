@@ -7,13 +7,13 @@ app.use(cors())
 
 import Person from './models/person.js'
 
-app.use(express.static('build'))
+
 app.use(express.json())
+app.use(express.static('build'))
 
 morgan.token('body', function (req, res) {  if(req.method === "POST") return JSON.stringify(req.body) })
 app.use(morgan(':method :url :status :res[content-length] :response-time ms :body'));
 
-/*
 //From Mozilla's Javascript Reference
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -25,9 +25,9 @@ const generateId = () => {
   /*const maxId = persons.length > 0 
     ? Math.max(...persons.map(n => n.id))
     : 0
-  return maxId + 1 
+  return maxId + 1 */
   return getRandomInt(5, 1000000)
-} */
+}
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
@@ -49,13 +49,6 @@ app.post('/api/persons', (request, response) => {
   })
 })
 
-
-const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
-}
-
-app.use(unknownEndpoint)
-
 app.get('/info', (_, res) => {
     const text = `<p>Phonebook has info for ${person.length} person</p>
                   <p>${new Date()}</p>`
@@ -68,40 +61,21 @@ app.get('/api/persons', (request, response) => {
   })
 })
 
-app.get('/api/persons/:id', (request, response, next) => {
+app.get('/api/persons/:id', (request, response) => {
   Person.findById(request.params.id).then(person => {
-    if(person) {
-      response.json(person)
-    }
-    else {
-      response.status(404).end()
-    }
+    response.json(person)
   })
-  .catch(error => next(error))
 })
 
 
-app.delete('/api/persons/:id', (request, response) => {
-  Person.findByIdAndRemove(request.params.id)
-  .then(result => {
-    response.status(204).end()
-  })
-  .catch(error => next(error))
+app.delete('/api/persons/:id', (req, res) => {
+  const id = Number(req.params.id)
+  person = person.filter(person => person.id !== id)
+
+  res.status(204).end()
 })
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
-
-const errorHandler = (error, request, response, next) => {
-  console.error(error.message)
-
-  if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id' })
-  } 
-
-  next(error)
-}
-
-app.use(errorHandler)
