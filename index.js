@@ -48,25 +48,22 @@ app.post('/api/persons', (request, response, next) => {
   .save()
   .then(savedPerson => savedPerson.toJSON())
   .then(savedAndFormattedPerson => {
-    response.json(savedPerson)
+    response.json(savedAndFormattedPerson)
   })
   .catch(error => next(error))
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
   const body = request.body
-  console.log(body.name)
-  console.log(body.number)
-  Person.findOneAndUpdate({name:body.name}, {number: body.number}, { runValidators: true })  
+  Person.findOneAndUpdate({name:body.name}, {number: body.number}, { new:true, runValidators: true })  
     .then(updatedPerson => {
-      console.log(updatedPerson)
+      response.json(updatedPerson.toJSON())
     })
     .catch(error => next(error))  
 })
 
 app.get('/info', (_, res) => {
     Person.countDocuments({}, (_, count) => {
-      console.log(count)
       const text = `<p>Phonebook has info for ${count} person</p>
       <p>${new Date()}</p>`
       res.send(text)
