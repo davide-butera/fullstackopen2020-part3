@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import uniqueValidator from 'mongoose-unique-validator'
 
-dotenv.config();
+dotenv.config()
 
 const url = process.env.MONGODB_URI
 
@@ -10,6 +10,7 @@ console.log('connecting to', url)
 
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
   .then(result => {
+    result 
     console.log('connected to MongoDB')
   })
   .catch((error) => {
@@ -38,5 +39,5 @@ personSchema.set('toJSON', {
   }
 })
 
-personSchema.plugin(uniqueValidator);
+personSchema.plugin(uniqueValidator)
 export default mongoose.model('Person', personSchema)
