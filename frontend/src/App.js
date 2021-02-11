@@ -34,20 +34,28 @@ const App = () => {
         personService
           .update(person.id, changedPerson)
           .then(returnedPerson => {
-            setPersons(persons.map(person => {
-              if(person.name === returnedPerson.name) {
-                person.number = returnedPerson.number
-                return person
-              }
-              else {
-                return person
-              }
-            }))
-            setNewName('')
-            setNewNumber('')
-          })
-        setSuccessMessage(`Updated '${newName}'`)
-        setTimeout(() => { setSuccessMessage(null) }, 5000)
+            if (returnedPerson.error) {
+              setErrorMessage(returnedPerson.error)
+              setTimeout(() => {
+                setErrorMessage(null)
+              }, 5000)
+            }
+            else {
+              setPersons(persons.map(person => {
+                if(person.name === returnedPerson.name) {
+                  person.number = returnedPerson.number
+                  return person
+                }
+                else {
+                  return person
+                }
+              }))
+              setNewName('')
+              setNewNumber('')
+              setSuccessMessage(`Updated '${newName}'`)
+              setTimeout(() => { setSuccessMessage(null) }, 5000)
+            }
+          }) 
       }
     } else {
       const noteObject = {
@@ -58,12 +66,20 @@ const App = () => {
       personService
         .create(noteObject)
         .then(returnedPerson => {
-          setPersons(persons.concat(returnedPerson))
-          setNewName('')
-          setNewNumber('')
+          if (returnedPerson.error) {
+            setErrorMessage(returnedPerson.error)
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000)
+          }
+          else {
+            setPersons(persons.concat(returnedPerson))
+            setNewName('')
+            setNewNumber('')
+            setSuccessMessage(`Added '${newName}'`)
+            setTimeout(() => { setSuccessMessage(null) }, 5000)
+          }
         })
-      setSuccessMessage(`Added '${newName}'`)
-      setTimeout(() => { setSuccessMessage(null) }, 5000)
     }
   }
 
